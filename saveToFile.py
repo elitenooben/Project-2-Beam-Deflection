@@ -19,7 +19,8 @@ def saveToFile():
     try:
         print("You are saving the following:\n\nBeamlength: %s\nBeamSupport: %s\nLoad position(s): %s\nForce(s) of load(s): %s" % (beamLength, beamSupport, loadPositions, loadForces))
     except NameError:
-        print("One must walk before one can fly. Please choose some values before trying to save.")
+        return print("One must walk before one can fly. Please choose some values before trying to save.")
+        
     while True:
         filename = input("Please type the desired filename: ")
         if len(set(filename.lower()+safechars)) != len(safechars):
@@ -29,6 +30,6 @@ def saveToFile():
             with open(filename+".csv", "w+") as f:
                 for item in values:
                     f.write("%s," % item)
-            print("Your file was saved as '" + filename + ".csv'. Good job! :D")
+            return print("Your file was saved as '" + filename + ".csv'. Good job! :D")
                          
-print(saveToFile())
+saveToFile()

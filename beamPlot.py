@@ -28,10 +28,7 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport):
     plt.ylabel("Deflection from y_0 in [m]")
     for i in range(len(y_a)):
         plt.text(a[i]+(0.5/14)*beamLength,y_a[i]-(0.5/14)*max(y_plot,key=abs), str(W[i]) + " N")
-    if beamSupport == "Cantilever":
-        plt.text(x_plot[np.where(y_plot == max(y_plot, key = abs))]+(0.4/14)*beamLength,max(y_plot, key = abs), "%.2E m" % Decimal(str(max(y_plot, key = abs))))  
-    else:
-        plt.text(x_plot[np.where(y_plot == max(y_plot, key = abs))]+(0.4/14)*beamLength,max(y_plot, key = abs)*1.04, "%.2E m" % Decimal(str(max(y_plot, key = abs))))  
+    plt.text(x_plot[np.where(y_plot == max(y_plot, key = abs))]+(0.4/14)*beamLength,max(y_plot, key = abs)*1.04, "%.2E m" % Decimal(str(max(y_plot, key = abs))))  
     style.use("ggplot")
     plt.legend()
     

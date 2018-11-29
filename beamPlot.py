@@ -13,24 +13,36 @@ from decimal import Decimal
 
 def beamPlot(beamLength, loadPositions, loadForces, beamSupport):
     x_plot = np.arange(beamLength*1.001, step = beamLength/100)
-    y_plot = -beamSuperposition(x_plot, beamLength, loadPositions, loadForces, beamSupport)
+    y_plot = beamSuperposition(x_plot, beamLength, loadPositions, loadForces, beamSupport)
     beamSupport = beamSupport.capitalize()
     
-    #Negative beam deflection
-    y_a = -beamSuperposition(a,l,a,W,beamSupport)
     
-    plt.plot(x_plot, y_plot, color = "b", label = "Beam", alpha =0.3)
-    plt.scatter(a, y_a, color = "r", s = 100, label = "Load Pos.")
-    plt.scatter(x_plot[np.where(abs(y_plot) == max(abs(y_plot)))], max(y_plot, key = abs), color = "g", s = 100, label = "Defl_max")
+    #Invert y axis
+    plt.gca().invert_yaxis()
     
+    #Write title and axis labels
     plt.title("Beam Deflection\nBeamType: %s" %beamSupport)
     plt.xlabel("Horizontal Length in [m]")
     plt.ylabel("Deflection from y_0 in [m]")
+    
+    #Plot deflection curve
+    plt.plot(x_plot, y_plot, color = "b", label = "Beam", alpha =0.3)
+    
+    #Get beam deflection at load points.
+    y_a = beamSuperposition(a,l,a,W,beamSupport)
+    #Plot beam loads and maximum deflection on the deflection curve
+    plt.scatter(a, y_a, color = "r", s = 100, label = "Load Pos.")
+    plt.scatter(x_plot[np.where(abs(y_plot) == max(abs(y_plot)))], max(y_plot, key = abs), color = "g", s = 100, label = "Defl_max")
+
+    #Write loads and maximum deflection on the deflection curve
     for i in range(len(y_a)):
         plt.text(a[i]+(0.5/14)*beamLength,y_a[i]-(0.5/14)*max(y_plot,key=abs), str(W[i]) + " N")
     plt.text(x_plot[np.where(y_plot == max(y_plot, key = abs))]+(0.4/14)*beamLength,max(y_plot, key = abs)*1.04, "%.2E m" % Decimal(str(max(y_plot, key = abs))))  
     style.use("ggplot")
     plt.legend()
+    
+    
+    
     
     plt.show()
     return 

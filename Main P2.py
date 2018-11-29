@@ -6,6 +6,8 @@ Created on Thu Nov 22 11:04:20 2018
 @author: SarahMagid
 """
 from beamPlot import beamPlot
+from loadFile import loadFile
+from saveToFile import saveToFile
 import numpy as np
 
 def isFloat(string):
@@ -26,14 +28,14 @@ def beamconf():
         print("You have entered an invalid input. Please enter beamlength as a scalar.")
         return None
     
-    support = {1: "Both", 2: "Cantilever"}
+    support = {"1": "Both", "2": "Cantilever"}
     print("""
 Support types:
 1. Both
 2. Cantilever
         """)
     stype = input("Choose a supporttype: ")
-    if stype != "1" or stype != "2":
+    if stype != "1" and stype != "2":
         print("Invalid input. Enter the number 1 or 2")
         return None
 
@@ -41,7 +43,7 @@ Support types:
 
 def Validation(beamLength, loadPosition):
     """Checks if loads are valid for the given beamlength 
-    and returns only valid loads. Prints to u"""
+    and returns only valid loads."""
     
     #A tuple of the invalid loadpositions
     failed = tuple(loadPosition[np.logical_or(loadPosition < 0, loadPosition >= beamLength)])
@@ -96,8 +98,8 @@ Beamload menu
                         print("Invalid position of load. Enter a number in meters smaller than the beamlength")
                         
                     force = input("Enter size of the force at the given position in [N]: ")
-                    if not isFloat(force) or float(force) == 0:
-                        print("Invalid size of force. Enter a number different from zero")
+                    if not isFloat(force) or float(force) <= 0:
+                        print("Invalid size of force. Enter a number larger than zero")
                     elif float(position)>0 and float(force)!=0:
                         loadPositions = np.append(loadPositions,position)
                         loadForces = np.append(loadForces,force)
@@ -106,9 +108,17 @@ Beamload menu
                         break
                 
         elif userinput == "3":
-            print("entered3")
+            saveToFile()
+            input("Press enter to continue ")    
         elif userinput == "4":
-            print("4")
+            temp = loadFile()
+            if temp != None:
+                beamLength = temp[0]
+                beamSupport = temp[1]
+                loadPositions = temp[2]
+                loadForces = temp[3]  
+                
+            input("Press enter to continue ")
         elif userinput == "5":
             beamPlot(beamLength, loadPositions, loadForces, beamSupport)
             input("Press enter to continue ")

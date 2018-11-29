@@ -2,7 +2,7 @@
 """
 Created on Fri Nov 23 20:50:11 2018
 
-@author: William
+@author: Christian
 """
 
 import numpy as np
@@ -10,6 +10,10 @@ import pandas as pd
 import os
 
 def loadFile():
+    """
+    Gets a filename to load from from the user. It must be alphanumerical.
+    Returns an array [beamLength, beamSupport, loadPositions, loadForces] if succesful,none if it fails.
+    """
     filename = None
     while True:
         filename = input("Name of file to load (write 'I surrender' to quit): ")
@@ -49,5 +53,3 @@ def loadFile():
         print("Some value in the file is invalid. Please only load files saved by this program.")
     except:
         print("Something very weird happened! Please only load files saved by this program.")
-    
-print(loadFile())

@@ -2,7 +2,7 @@
 """
 Created on Thu Nov 22 15:06:20 2018
 
-@author: William
+@author: Carl
 """
 
 import numpy as np
@@ -10,11 +10,17 @@ import pandas as pd
 
 
 def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
+    """
+    Saves beam and loads to a file given the beam length, beam support, load positions and load forces.
+    Gets a filename from the user to save as that must be alphanumerical.
+    Returns None if something goes wrong.
+    """
     #Make sure there is something to save
     try:
         print("You are saving the following:\n\nBeamlength: %s\nBeamSupport: %s\nLoad position(s): %s\nForce(s) of load(s): %s" % (beamLength, beamSupport, loadPositions, loadForces))
     except NameError:
-        return print("One must walk before one can fly. Please choose some values before trying to save.")
+        print("One must walk before one can fly. Please choose some values before trying to save.")
+        return 
     
     #Get a filename, save to filename.csv
     while True:

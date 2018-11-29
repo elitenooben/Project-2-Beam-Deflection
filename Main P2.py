@@ -41,19 +41,32 @@ Support types:
 
     return (float(length), support[stype])
 
-def Validation(beamLength, loadPosition):
+def Validation(beamLength, loadPosition, loadForces):
     """Checks if loads are valid for the given beamlength 
     and returns only valid loads."""
     
+    indexer = np.logical_and(loadPosition >= 0, loadPosition < beamLength)
     #A tuple of the invalid loadpositions
-    failed = tuple(loadPosition[np.logical_or(loadPosition < 0, loadPosition >= beamLength)])
+    failed = tuple(loadPosition[not indexer])
     #An array of the valid loadpositions
-    newloads = loadPosition[np.logical_and(loadPosition >= 0, loadPosition < beamLength)]
+    newloads = loadPosition[indexer]
+    newForces = loadForces[indexer]
     #Informs user if any loadpositions have been removed
     if len(failed)>0:
-        print("The loads %s have been removed, because they are invalid for the beamlength: %s meter." % (failed,beamLength))
-    return newloads
+        print("The loads %s have been removed, because they are invalid for the beamlength: %s meters." % (failed,beamLength))
+    return (newloads, newForces)
 
+def checkLoads(beamLength, loadPosition):
+    """
+    Checks whether all loads are valid for current beam.
+    """    
+    for load in loadPosition:
+        if load < 0 or load > beamLength:
+            return False
+    
+    return True
+
+    
 def mainscript():
     #Initialization
     beamLength = 10.
@@ -71,18 +84,39 @@ def mainscript():
 5. Generate plots
 6. Quit 
               """)
-        
+        print("The current beam is %s m, support type %s" %(beamLength, beamSupport))
+        if(len(loadPositions) == 0):
+            print("No current loads!")
         userinput = input("Choose a menu point by entering a number: ")
         
         if userinput == "1":
-            beamconf()
+            temp = beamconf()
+            
+            if(temp != None):
+                if not checkLoads(temp, loadPositions):
+                    print("Your loads are not all valid for the new beam.")
+                    print("All invalid loads will be removed.")            
+                    yn = input("Do you want to save first? [y/n] ").lower()
+                    if(yn == "y"):
+                        saveToFile(beamLength, beamSupport, loadPositions, loadForces)
+                    
+                    loadTuple = Validation(beamLength, loadPositions, loadForces)
+                    loadPositions = loadTuple[0]
+                    loadForces = loadTuple[1]
+                
+                beamLength = temp[0]
+                beamSupport = temp[1]
+                print("Changed beam to %s m, support type %s" %(beamLength, beamSupport))
+                input("Press enter to continue ");         
+            
+            
         elif userinput == "2":
             print("""
 Beamload menu
 1. See current loads
 2. Add a load
 3. Remove a load""")
-            choice = input("Choose a menupoint: ")
+            choice = input("Choose a menu point: ")
             if choice =="1":
                 if len(loadPositions) == 0 and len(loadForces)==0:
                     print("There are no current loads")
@@ -108,7 +142,7 @@ Beamload menu
                         break
                 
         elif userinput == "3":
-            saveToFile()
+            saveToFile(beamLength, beamSupport, loadPositions, loadForces)
             input("Press enter to continue ")    
         elif userinput == "4":
             temp = loadFile()
@@ -123,9 +157,16 @@ Beamload menu
             beamPlot(beamLength, loadPositions, loadForces, beamSupport)
             input("Press enter to continue ")
         elif userinput == "6":
+            if beamLength and beamSupport != None:
+                yn = input("Do you want to save first? [y/n] ").lower()
+                if(yn == "y"):
+                    saveToFile(beamLength, beamSupport, loadPositions, loadForces)
+            
+            print("Quitting")
             break
         else:
             print("Invalid input. Enter a menupoint number from 1 to 6")
     return
 mainscript()
+        
         

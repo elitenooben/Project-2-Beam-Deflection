@@ -34,15 +34,12 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport):
     plt.scatter(a, y_a, color = "r", s = 100, label = "Load Pos.")
     plt.scatter(x_plot[np.where(abs(y_plot) == max(abs(y_plot)))], max(y_plot, key = abs), color = "g", s = 100, label = "Defl_max")
 
-    #Write loads and maximum deflection on the deflection curve
+    #Write loads and maximum deflection on the deflection curve, and add legend.
     for i in range(len(y_a)):
         plt.text(a[i]+(0.5/14)*beamLength,y_a[i]-(0.5/14)*max(y_plot,key=abs), str(W[i]) + " N")
     plt.text(x_plot[np.where(y_plot == max(y_plot, key = abs))]+(0.4/14)*beamLength,max(y_plot, key = abs)*1.04, "%.2E m" % Decimal(str(max(y_plot, key = abs))))  
     style.use("ggplot")
     plt.legend()
-    
-    
-    
     
     plt.show()
     return 

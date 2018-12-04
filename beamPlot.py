@@ -20,6 +20,9 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport):
     y_plot = beamSuperposition(x_plot, beamLength, loadPositions, loadForces, beamSupport)
     beamSupport = beamSupport.capitalize()
     
+    l = beamLength
+    a = loadPositions
+    W = loadForces
     
     #Invert y axis
     plt.gca().invert_yaxis()

@@ -34,7 +34,7 @@ Support types:
 1. Both
 2. Cantilever
         """)
-    stype = input("Choose a supporttype: ")
+    stype = input("Choose a support type: ")
     if stype != "1" and stype != "2":
         print("Invalid input. Enter the number 1 or 2")
         return None
@@ -42,7 +42,7 @@ Support types:
     return (float(length), support[stype])
 
 def Validation(beamLength, loadPosition, loadForces):
-    """Checks if loads are valid for the given beamlength 
+    """Checks if loads are valid for the given beam length 
     and returns only valid loads."""
     
     indexer = np.logical_and(loadPosition >= 0, loadPosition < beamLength)
@@ -53,7 +53,7 @@ def Validation(beamLength, loadPosition, loadForces):
     newForces = loadForces[indexer]
     #Informs user if any loadpositions have been removed
     if len(failed)>0:
-        print("The loads %s have been removed, because they are invalid for the beamlength: %s meters." % (failed,beamLength))
+        print("The loads %s have been removed, because they are invalid for the beam length: %s meters." % (failed,beamLength))
     return (newloads, newForces)
 
 def checkLoads(beamLength, loadPosition):
@@ -66,6 +66,28 @@ def checkLoads(beamLength, loadPosition):
     
     return True
 
+def askSave(beamLength, beamSupport, loadPositions, loadForces):
+    """
+    Asks whether the user wants to save.
+    """
+    
+    yn = input("Do you want to save first? [y/n] ").lower()
+    if(yn == "y"):
+        saveToFile(beamLength, beamSupport, loadPositions, loadForces)
+
+
+def printLoads(loadPositions, loadForces):
+    """
+    Prints given loads. Returns whether any loads currently exist
+    """
+    if(len(loadPositions) == 0):
+        print("No current loads")
+        return False
+    else:
+        print(" Loads")
+        for i, load in enumerate(zip(loadPositions, loadForces)):
+            print(str(i+1) + ". " + str(load[1]) + "N at " + str(load[0]) + "m")
+        return True
     
 def mainscript():
     #Initialization
@@ -96,9 +118,7 @@ def mainscript():
                 if not checkLoads(temp, loadPositions):
                     print("Your loads are not all valid for the new beam.")
                     print("All invalid loads will be removed.")            
-                    yn = input("Do you want to save first? [y/n] ").lower()
-                    if(yn == "y"):
-                        saveToFile(beamLength, beamSupport, loadPositions, loadForces)
+                    askSave(beamLength, beamSupport, loadPositions, loadForces)
                     
                     loadTuple = Validation(beamLength, loadPositions, loadForces)
                     loadPositions = loadTuple[0]
@@ -112,55 +132,69 @@ def mainscript():
             
         elif userinput == "2":
             print("""
-Beamload menu
+loads menu
 1. See current loads
 2. Add a load
 3. Remove a load""")
             choice = input("Choose a menu point: ")
             if choice =="1":
-                if len(loadPositions) == 0 and len(loadForces)==0:
-                    print("There are no current loads")
-                elif len(loadPositions)==1 and len(loadForces)==1:
-                    print("Currently there is one force of magnitude %s N at position %s meters." % (str(loadForces[0]),str(loadPositions[0])))
-                elif len(loadPositions)>1 and len(loadForces)>1:
-                    print("Currently there are forces of magnitudes %s N at the positions %s meters." %(loadForces, loadPositions))
+                printLoads(loadPositions, loadForces);
                 input("Press enter to continue ")
+                
             elif choice =="2":
+                position = None
+                force = None
+                
                 while True:
                     position = input("Enter a position in meters: ")
-                    if not isFloat(position) or float(position) < 0 or float(position) > beamLength:
-                        print("Invalid position of load. Enter a number in meters smaller than the beamlength")
-                        
+                    if isFloat(position) and float(position) > 0 and float(position) <= beamLength:
+                        break;
+                    print("Invalid position of load. Enter a number in meters smaller than the beamlength")
+
+                while True:
                     force = input("Enter size of the force at the given position in [N]: ")
-                    if not isFloat(force) or float(force) <= 0:
-                        print("Invalid size of force. Enter a number larger than zero")
-                    elif float(position)>0 and float(force)!=0:
-                        loadPositions = np.append(loadPositions,position)
-                        loadForces = np.append(loadForces,force)
-                        print("The force of magnitude %s N positioned at %s m has been added." %(force, position))
-                        input("Press enter to continue ")
-                        break
+                    if isFloat(force) and float(force) > 0:
+                        break;
+                    print("Invalid size of force. Enter a number larger than zero")
                 
+                loadPositions = np.append(loadPositions,float(position))
+                loadForces = np.append(loadForces,float(force))
+                print("A force of magnitude %s N positioned at %s m has been added." %(force, position))
+                input("Press enter to continue ")
+            
+            elif choice == "3":
+                if(printLoads(loadPositions, loadForces)):
+                    toRemove = input("Which index do you want to remove: ")
+                    if not toRemove.isdecimal() or int(toRemove) < 1 or int(toRemove) > len(loadPositions):
+                        print("You have to choose a load!")
+                    else:
+                        toRemove = int(toRemove)-1
+                        removePosition = loadPositions[toRemove]
+                        removeForce = loadForces[toRemove]
+                        loadPositions = np.delete(loadPositions, toRemove) 
+                        loadForces = np.delete(loadForces, toRemove)
+                        print("Removed " + str(removeForce) + "N at " + str(removePosition) + "m")
+                        input("Press enter to continue ")
+                        
         elif userinput == "3":
             saveToFile(beamLength, beamSupport, loadPositions, loadForces)
             input("Press enter to continue ")    
         elif userinput == "4":
+            askSave(beamLength, beamSupport, loadPositions, loadForces)
+            
             temp = loadFile()
             if temp != None:
                 beamLength = temp[0]
                 beamSupport = temp[1]
                 loadPositions = temp[2]
-                loadForces = temp[3]  
+                loadForces = temp[3]
                 
             input("Press enter to continue ")
         elif userinput == "5":
             beamPlot(beamLength, loadPositions, loadForces, beamSupport)
             input("Press enter to continue ")
         elif userinput == "6":
-            if beamLength and beamSupport != None:
-                yn = input("Do you want to save first? [y/n] ").lower()
-                if(yn == "y"):
-                    saveToFile(beamLength, beamSupport, loadPositions, loadForces)
+            askSave(beamLength, beamSupport, loadPositions, loadForces)
             
             print("Quitting")
             break

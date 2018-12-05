@@ -147,7 +147,7 @@ loads menu
                 
                 while True:
                     position = input("Enter a position in meters: ")
-                    if isFloat(position) and float(position) > 0 and float(position) <= beamLength:
+                    if isFloat(position) and float(position) > 0 and float(position) < beamLength:
                         break;
                     print("Invalid position of load. Enter a number in meters smaller than the beamlength")
 
@@ -164,9 +164,12 @@ loads menu
             
             elif choice == "3":
                 if(printLoads(loadPositions, loadForces)):
-                    toRemove = input("Which index do you want to remove: ")
-                    if not toRemove.isdecimal() or int(toRemove) < 1 or int(toRemove) > len(loadPositions):
-                        print("You have to choose a load!")
+                    toRemove = ""
+                    while not toRemove.isdecimal() or int(toRemove) < 1 or int(toRemove) > len(loadPositions):
+                        toRemove = input("Which index do you want to remove: ")
+                        print("You have to choose a valid load index, or write Q to quit")
+                        if toRemove.lower() == "q":
+                            break;
                     else:
                         toRemove = int(toRemove)-1
                         removePosition = loadPositions[toRemove]
@@ -178,7 +181,8 @@ loads menu
                         
         elif userinput == "3":
             saveToFile(beamLength, beamSupport, loadPositions, loadForces)
-            input("Press enter to continue ")    
+            input("Press enter to continue ")
+            
         elif userinput == "4":
             askSave(beamLength, beamSupport, loadPositions, loadForces)
             

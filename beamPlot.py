@@ -18,7 +18,6 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport):
     
     x_plot = np.arange(beamLength*1.001, step = beamLength/100)
     y_plot = beamSuperposition(x_plot, beamLength, loadPositions, loadForces, beamSupport)
-    beamSupport = beamSupport.capitalize()
     
     l = beamLength
     a = loadPositions

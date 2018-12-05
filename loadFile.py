@@ -17,13 +17,13 @@ def loadFile():
     filename = None
     while True:
         filename = input("Name of file to load (write 'I surrender' to quit): ")
-        if not filename.isalnum():
+        if filename.lower() == "i surrender":
+            print("Better luck next time!")
+            return 
+        elif not filename.isalnum():
             print("Write only alphanumerical characters :)")
         elif os.path.exists(filename+".csv") or os.path.exists(filename):
             break
-        elif filename.lower() == "i surrender":
-            print("Better luck next time!")
-            return 
         else:
             print("File not found. Try again.")
             

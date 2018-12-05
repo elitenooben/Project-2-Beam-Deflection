@@ -12,7 +12,6 @@ def beamDeflection(positions, beamLength, loadPosition, loadForce, beamSupport):
     l = beamLength
     a = loadPosition
     W = loadForce
-    beamSupport = beamSupport.capitalize()
     
     # c = 6*E*I
     c = 6 * 200*10**9 * 0.001

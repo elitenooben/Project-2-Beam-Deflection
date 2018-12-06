@@ -12,7 +12,7 @@ from beamUtils import validLoads
 def loadFile():
     """
     Gets a filename to load from from the user. It must be alphanumerical.
-    Loads csv using 
+    Loads csv using pandas.
     Returns an array [beamLength, beamSupport, loadPositions, loadForces] if succesful,none if it fails.
     """
     filename = None

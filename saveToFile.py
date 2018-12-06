@@ -7,7 +7,7 @@ Created on Thu Nov 22 15:06:20 2018
 
 import numpy as np
 import pandas as pd
-from utils import printLoads
+from beamUtils import printLoads
 
 def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
     """

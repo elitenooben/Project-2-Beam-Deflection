@@ -3,7 +3,11 @@
 """
 Created on Thu Nov 22 11:04:20 2018
 
+<<<<<<< HEAD
 @author: Sarah Magid & Carl
+=======
+@author: Carl and Sarah
+>>>>>>> 6b90f27cdced8d0f64be123c9863c98d03e23f71
 """
 from beamPlot import beamPlot
 from loadFile import loadFile

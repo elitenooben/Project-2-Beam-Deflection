@@ -2,7 +2,11 @@
 """
 Created on Mon Nov 19 12:12:18 2018
 
+<<<<<<< HEAD
 @author: Christian & Carl
+=======
+@author: Christian
+>>>>>>> 6b90f27cdced8d0f64be123c9863c98d03e23f71
 """
 
 import numpy as np

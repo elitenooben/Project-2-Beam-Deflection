@@ -2,7 +2,11 @@
 """
 Created on Mon Nov 19 10:26:54 2018
 
+<<<<<<< HEAD
 @author: Sarah Magid
+=======
+@author: Sarah
+>>>>>>> 6b90f27cdced8d0f64be123c9863c98d03e23f71
 """
 
 import numpy as np

@@ -20,12 +20,12 @@ def isFloat(string):
         return False;
     return True;
 
-def beamconf():
-    """This function gets beam configureations from user and checks validity"""
+def configureBeam():
+    """This function gets beam configurations from user and checks validity"""
     
     length = input("Enter the length of beam in meters: ")
     if not isFloat(length):
-        print("You have entered an invalid input. Please enter beamlength as a scalar.")
+        print("You have entered an invalid input. Please enter beam length as a scalar.")
         return None
     
     support = {"1": "Both", "2": "Cantilever"}
@@ -41,19 +41,22 @@ Support types:
 
     return (float(length), support[stype])
 
-def Validation(beamLength, loadPosition, loadForces):
-    """Checks if loads are valid for the given beam length 
-    and returns only valid loads."""
+def validLoads(beamLength, loadPositions, loadForces):
+    """Returns valid loads for the given beam length."""
     
-    indexer = np.logical_and(loadPosition >= 0, loadPosition < beamLength)
-    #A tuple of the invalid loadpositions
-    failed = tuple(loadPosition[not indexer])
-    #An array of the valid loadpositions
-    newloads = loadPosition[indexer]
+    #Create indexer to index valid load positions
+    indexer = np.logical_and(loadPositions >= 0, loadPositions < beamLength)
+    
+    invalid = loadPositions[not indexer]
+    print(invalid)
+    
+    newloads = loadPositions[indexer]
     newForces = loadForces[indexer]
-    #Informs user if any loadpositions have been removed
-    if len(failed)>0:
-        print("The loads %s have been removed, because they are invalid for the beam length: %s meters." % (failed,beamLength))
+    
+    #Informs user if any load positions are invalid
+    if len(invalid)>0:
+        print("The loads at positions %s have been removed, because they are not on the %s meter long beam." % (invalid,beamLength))
+    
     return (newloads, newForces)
 
 def checkLoads(beamLength, loadPosition):
@@ -98,7 +101,7 @@ def mainscript():
     loadForces = np.array([])
 
     while True:
-        print("""
+        print(""" Main Menu
 1. Configure beam
 2. Configure loads
 3. Save beam and loads
@@ -111,23 +114,25 @@ def mainscript():
             print("No current loads!")
         userinput = input("Choose a menu point by entering a number: ")
         
+        #Get a beam from the user, and only change anything if it is a valid beam
         if userinput == "1":
-            temp = beamconf()
+            temp = configureBeam()
             
             if(temp != None):
-                if not checkLoads(temp, loadPositions):
+                #Remove invalid loads, and allow saving current state
+                if not checkLoads(temp[0], loadPositions):
                     print("Your loads are not all valid for the new beam.")
-                    print("All invalid loads will be removed.")            
+                    print("All invalid loads will be removed")
                     askSave(beamLength, beamSupport, loadPositions, loadForces)
                     
-                    loadTuple = Validation(beamLength, loadPositions, loadForces)
+                    loadTuple = validLoads(temp[0], loadPositions, loadForces)
                     loadPositions = loadTuple[0]
                     loadForces = loadTuple[1]
                 
                 beamLength = temp[0]
                 beamSupport = temp[1]
                 print("Changed beam to %s m, support type %s" %(beamLength, beamSupport))
-                input("Press enter to continue ");         
+                input("Press enter to continue ");
             
             
         elif userinput == "2":
@@ -135,8 +140,10 @@ def mainscript():
 loads menu
 1. See current loads
 2. Add a load
-3. Remove a load""")
+3. Remove a load
+4. Remove all loads""")
             choice = input("Choose a menu point: ")
+            
             if choice =="1":
                 printLoads(loadPositions, loadForces);
                 input("Press enter to continue ")
@@ -178,7 +185,16 @@ loads menu
                         loadForces = np.delete(loadForces, toRemove)
                         print("Removed " + str(removeForce) + "N at " + str(removePosition) + "m")
                         input("Press enter to continue ")
-                        
+                    
+            elif choice == "4":
+                if(len(loadPositions) == 0):
+                    print("No loads to remove")
+                    continue
+                askSave(beamLength, beamSupport, loadPositions, loadForces)
+                loadPositions = np.array([])
+                loadForces = np.array([])
+                print("Removed all loads.")
+                
         elif userinput == "3":
             saveToFile(beamLength, beamSupport, loadPositions, loadForces)
             input("Press enter to continue ")
@@ -186,6 +202,7 @@ loads menu
         elif userinput == "4":
             askSave(beamLength, beamSupport, loadPositions, loadForces)
             
+            #Load a beam, and change beam to it if it is valid
             temp = loadFile()
             if temp != None:
                 beamLength = temp[0]
@@ -197,6 +214,7 @@ loads menu
         elif userinput == "5":
             beamPlot(beamLength, loadPositions, loadForces, beamSupport)
             input("Press enter to continue ")
+            
         elif userinput == "6":
             askSave(beamLength, beamSupport, loadPositions, loadForces)
             

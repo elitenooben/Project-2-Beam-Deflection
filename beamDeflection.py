@@ -17,6 +17,7 @@ def beamDeflection(positions, beamLength, loadPosition, loadForce, beamSupport):
     c = 6 * 200*10**9 * 0.001
     y = np.zeros(len(x))
     
+    #Calculate the deflection array in two halves, for x<a and x>=a.
     if beamSupport == "Both":
         y[x < a] = (W*(l-a)*x*(l**2-x**2-(l-a)**2)/(c*l))[x < a]
         y[x >= a] = (W*a*(l-x)*(l**2-(l-x)**2-a**2)/(c*l))[x >= a]
@@ -29,15 +30,13 @@ def beamDeflection(positions, beamLength, loadPosition, loadForce, beamSupport):
 
 def beamSuperposition(positions, beamLength, loadPositions, loadForces, beamSupport):
     """ Calculates deflection when multiple loads are given 
-    by the use of the superposition principle """
+    by the use of the superposition principle.
+    Returns a zero vector if no loads are given."""
     
     deflection = np.zeros(len(positions))
     
-    #Checks for loads. If loads are empty, function returns 
-    #a zero vector of the same length as positions
-    if len(loadPositions) and len(loadForces):
-        for loadF, loadP in zip(loadForces, loadPositions):
-            #The beamDeflection function is used for calculations
-            deflection += beamDeflection(positions, beamLength, loadP, loadF, beamSupport)
+    for loadF, loadP in zip(loadForces, loadPositions):
+        #The beamDeflection function is used for calculations
+        deflection += beamDeflection(positions, beamLength, loadP, loadF, beamSupport)
     
     return deflection

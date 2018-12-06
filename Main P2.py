@@ -17,9 +17,9 @@ def getBeam():
     length = None
     
     while True:
-        input("Enter the length of beam in meters: ")
-        if not isFloat(length):
-            print("You have entered an invalid input.\nPlease enter beam length as a scalar.")
+        length = input("Enter the length of beam in meters: ")
+        if not isFloat(length) or float(length) <= 0:
+            print("You have entered an invalid input.\nPlease enter beam length as a positive scalar.")
         else:
             break
     
@@ -41,7 +41,7 @@ Support types:
 
 def askSave(beamLength, beamSupport, loadPositions, loadForces):
     """
-    Asks whether the user wants to save.
+    Asks whether the user wants to save, if there is anything to save.
     """
     if(len(loadPositions) == 0):
         return
@@ -72,25 +72,25 @@ def mainscript():
             print("No current loads!")
         userinput = input("Choose a menu point by entering a number: ")
         
-        #Get a valid beam from the user
         if userinput == "1":
+            #Get a valid beam from the user
             temp = getBeam()
             
-            if(temp != None):
-                #Remove invalid loads, and allow saving current state
-                if not checkLoads(temp[0], loadPositions):
-                    print("Your loads are not all valid for the new beam.")
-                    print("All invalid loads will be removed")
-                    askSave(beamLength, beamSupport, loadPositions, loadForces)
-                    
-                    loadTuple = validLoads(temp[0], loadPositions, loadForces)
-                    loadPositions = loadTuple[0]
-                    loadForces = loadTuple[1]
+            #Remove invalid loads, and allow saving current state
+            if not checkLoads(temp[0], loadPositions):
+                print("Your loads are not all valid for the new beam.")
+                print("All invalid loads will be removed")
+                askSave(beamLength, beamSupport, loadPositions, loadForces)
                 
-                beamLength = temp[0]
-                beamSupport = temp[1]
-                print("Changed beam length to %s m, support type to %s" %(beamLength, beamSupport))
-                input("Press enter to continue ");
+                loadTuple = validLoads(temp[0], loadPositions, loadForces)
+                loadPositions = loadTuple[0]
+                loadForces = loadTuple[1]
+            
+            #Finally change beam
+            beamLength = temp[0]
+            beamSupport = temp[1]
+            print("Changed beam length to %s m, support type to %s" %(beamLength, beamSupport))
+            input("Press enter to continue ");
             
             
         elif userinput == "2":
@@ -99,7 +99,8 @@ def mainscript():
 1. See current loads
 2. Add a load
 3. Remove a load
-4. Remove all loads""")
+4. Remove all loads
+5. Exit""")
             choice = input("Choose a menu point: ")
             
             if choice =="1":
@@ -107,6 +108,7 @@ def mainscript():
                 input("Press enter to continue ")
                 
             elif choice =="2":
+                #Get valid position and force from the user.
                 position = None
                 force = None
                 
@@ -122,20 +124,29 @@ def mainscript():
                         break;
                     print("Invalid size of force.\nEnter a number larger than zero")
                 
+                #Add positions and forces to their respective arrays.
                 loadPositions = np.append(loadPositions,float(position))
                 loadForces = np.append(loadForces,float(force))
                 print("A force of magnitude %s N positioned at %s m has been added." %(force, position))
                 input("Press enter to continue ")
             
             elif choice == "3":
+                #Give the user a menu of all current loads, and get a valid load index to remove.
                 if(printLoads(loadPositions, loadForces)):
                     toRemove = ""
-                    while not toRemove.isdecimal() or int(toRemove) < 1 or int(toRemove) > len(loadPositions):
+                    while True:
                         toRemove = input("Which index do you want to remove: ")
-                        print("You have to choose a valid load index, or write Q to quit")
+                        
+                        #Allow user to quit if they don't want to remove anything.
                         if toRemove.lower() == "q":
-                            break;
-                    else:
+                            break
+                        elif(not toRemove.isdecimal() or int(toRemove) < 1 or int(toRemove) > len(loadPositions)):
+                            print("You have to choose a valid load index, or write Q to quit")
+                        else:
+                            break
+
+                    #If the user doesn't quit, remove load at given index.
+                    if toRemove.lower() != "q":
                         toRemove = int(toRemove)-1
                         removePosition = loadPositions[toRemove]
                         removeForce = loadForces[toRemove]
@@ -143,15 +154,22 @@ def mainscript():
                         loadForces = np.delete(loadForces, toRemove)
                         print("Removed " + str(removeForce) + "N at " + str(removePosition) + "m")
                         input("Press enter to continue ")
-                    
+            
             elif choice == "4":
+                #Remove all loads if any exist. First, ask the user if they want to save.
                 if(len(loadPositions) == 0):
                     print("No loads to remove")
                     continue
                 askSave(beamLength, beamSupport, loadPositions, loadForces)
+                
                 loadPositions = np.array([])
                 loadForces = np.array([])
                 print("Removed all loads.")
+                
+            elif choice == "5":
+                print("Quitting submenu.")
+            else:
+                print("Qutting submenu. Enter a valid menu point next time.")
                 
         elif userinput == "3":
             saveToFile(beamLength, beamSupport, loadPositions, loadForces)
@@ -160,7 +178,7 @@ def mainscript():
         elif userinput == "4":
             askSave(beamLength, beamSupport, loadPositions, loadForces)
             
-            #Load a beam, and check if it is valid
+            #Load a beam, and check if it is a valid file
             temp = loadFile()
             if temp != None:
                 beamLength = temp[0]

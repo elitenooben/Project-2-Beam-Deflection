@@ -12,12 +12,13 @@ from beamUtils import validLoads
 def loadFile():
     """
     Gets a filename to load from from the user. It must be alphanumerical.
+    Loads csv using 
     Returns an array [beamLength, beamSupport, loadPositions, loadForces] if succesful,none if it fails.
     """
     filename = None
     while True:
-        filename = input("Name of file to load (write 'I surrender' to quit): ")
-        if filename.lower() == "i surrender":
+        filename = input("Name of file to load (write 'Q' to quit): ")
+        if filename.lower() == "q":
             print("Better luck next time!")
             return 
         elif not filename.isalnum():

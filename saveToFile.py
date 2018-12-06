@@ -17,7 +17,7 @@ def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
     """
     #Make sure there is something to save
     try:
-        print("You are saving a beam of length %s m with support type %s")
+        print("You are saving a beam of length %s m with support type %s" % (beamLength, beamSupport))
         printLoads(loadPositions, loadForces)
     except NameError:
         print("One must walk before one can fly. Please choose some values before trying to save.")

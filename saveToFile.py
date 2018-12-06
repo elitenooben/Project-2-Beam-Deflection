@@ -36,6 +36,8 @@ def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
                 break
             else:
                 print("Not overwriting.")
+        else:
+            break
     
     #Create a matrix of values, 0th row is beam, rest are the loads.
     values = np.array([beamLength, beamSupport])

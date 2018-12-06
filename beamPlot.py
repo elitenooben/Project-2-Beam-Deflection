@@ -28,8 +28,8 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes):
     
     #Write title and axis labels
     plt.title("Beam Deflection\nBeamType: %s" %beamSupport)
-    plt.xlabel("Horizontal Length in [m]")
-    plt.ylabel("Deflection from y_0 in [m]")
+    plt.xlabel("Horizontal Length [m]")
+    plt.ylabel("Deflection [m]")
     if(equalAxes):
         plt.axis("equal")
     

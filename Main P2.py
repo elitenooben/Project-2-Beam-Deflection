@@ -198,11 +198,9 @@ def mainscript():
                 continue
             
             #Ask whether the user wants constrained scaling
-            equalAxes = False
-            yn = input("Do you want the x- and y-axes to have constrained scaling? [y/n] ")
-            equalAxes = yn == "y"
+            constrainedScaling = input("Do you want the x- and y-axes to have constrained scaling? [y/n] ") == "y"
             
-            beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes)
+            beamPlot(beamLength, loadPositions, loadForces, beamSupport, constrainedScaling)
             input("Press enter to continue ")
             
         elif userinput == "6":

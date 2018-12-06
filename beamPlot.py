@@ -11,7 +11,11 @@ from beamDeflection import beamSuperposition
 from matplotlib import style
 from decimal import Decimal
 
-def beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes):
+def beamPlot(beamLength, loadPositions, loadForces, beamSupport, constrainedScaling):
+    """
+    Plots the deflection of the given beam with the given loads. Uses beamSuperposition to calculate deflection.
+    constrainedScaling is whether the axes are scaling constrained
+    """
     x_plot = np.arange(beamLength*1.001, step = beamLength/100)
     y_plot = beamSuperposition(x_plot, beamLength, loadPositions, loadForces, beamSupport)
     
@@ -30,7 +34,9 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes):
     plt.title("Beam Deflection\nBeamType: %s" %beamSupport)
     plt.xlabel("Horizontal Length [m]")
     plt.ylabel("Deflection [m]")
-    if(equalAxes):
+    
+    #Allow constrained scaling
+    if(constrainedScaling):
         plt.axis("equal")
     
     #Plot deflection curve
@@ -42,8 +48,8 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes):
     plt.scatter(a, y_a, color = "r", s = 100, label = "Load Pos.")
     plt.scatter(x_plot[np.where(abs(y_plot) == max(abs(y_plot)))], max(y_plot, key = abs), color = "g", s = 100, label = "Defl_max")
     
-    #Make some gui constants so we can find out text offset
-    ymax = beamLength/2 if equalAxes else max(y_plot,key=abs)
+    #Make some gui constants so we can find out text offsets whether the axes are constrained or not
+    ymax = beamLength/2 if constrainedScaling else max(y_plot,key=abs)
     xoffset = (0.5/14)*beamLength
     yoffset = (0.5/14)*ymax
     
@@ -56,6 +62,6 @@ def beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes):
     
     plt.show()
     
-    print("Scaling " + ("constrained" if equalAxes else "unconstrained"))
+    print("Scaling " + ("constrained" if constrainedScaling else "unconstrained"))
     return 
 

@@ -4,7 +4,7 @@ Created on Thu Dec  6 12:38:42 2018
 
 Contains utility functions.
 
-@author: carl
+@author: Carl
 """
 import numpy as np
 

@@ -3,7 +3,7 @@
 """
 Created on Thu Nov 22 11:04:20 2018
 
-@author: SarahMagid
+@author: Sarah Magid & Carl
 """
 from beamPlot import beamPlot
 from loadFile import loadFile

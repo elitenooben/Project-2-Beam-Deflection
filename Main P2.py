@@ -14,10 +14,14 @@ from beamUtils import isFloat, validLoads, checkLoads, printLoads
 def configureBeam():
     """This function gets beam configurations from user and checks validity"""
     
-    length = input("Enter the length of beam in meters: ")
-    if not isFloat(length):
-        print("You have entered an invalid input. Please enter beam length as a scalar.")
-        return None
+    length = None
+    
+    while True:
+        input("Enter the length of beam in meters: ")
+        if not isFloat(length):
+            print("You have entered an invalid input.\nPlease enter beam length as a scalar.")
+        else:
+            break
     
     support = {"1": "Both", "2": "Cantilever"}
     print("""
@@ -25,10 +29,13 @@ Support types:
 1. Both
 2. Cantilever
         """)
-    stype = input("Choose a support type: ")
-    if stype != "1" and stype != "2":
-        print("Invalid input. Enter the number 1 or 2")
-        return None
+    stype = None
+    while True:
+        stype = input("Choose a support type: ")
+        if stype != "1" and stype != "2":
+            print("Invalid input. Enter the number 1 or 2")
+        else:
+            break
 
     return (float(length), support[stype])
 
@@ -36,6 +43,9 @@ def askSave(beamLength, beamSupport, loadPositions, loadForces):
     """
     Asks whether the user wants to save.
     """
+    if(len(loadPositions) == 0):
+        return
+    
     yn = None
     yn = input("Do you want to save first? [y/n] ").lower()
     if(yn == "y"):
@@ -79,7 +89,7 @@ def mainscript():
                 
                 beamLength = temp[0]
                 beamSupport = temp[1]
-                print("Changed beam to %s m, support type %s" %(beamLength, beamSupport))
+                print("Changed beam length to %s m, support type to %s" %(beamLength, beamSupport))
                 input("Press enter to continue ");
             
             
@@ -104,13 +114,13 @@ def mainscript():
                     position = input("Enter a position in meters: ")
                     if isFloat(position) and float(position) >= 0 and float(position) <= beamLength:
                         break;
-                    print("Invalid position of load. Enter a number in meters smaller than the beamlength")
+                    print("Invalid position of load.\nEnter a number in meters smaller than the beam length.")
 
                 while True:
                     force = input("Enter size of the force at the given position in [N]: ")
                     if isFloat(force) and float(force) > 0:
                         break;
-                    print("Invalid size of force. Enter a number larger than zero")
+                    print("Invalid size of force.\nEnter a number larger than zero")
                 
                 loadPositions = np.append(loadPositions,float(position))
                 loadForces = np.append(loadForces,float(force))
@@ -171,7 +181,7 @@ def mainscript():
             
             #Ask whether the user wants constrained scaling
             equalAxes = False
-            yn = input("Do you want the x and y-axes to have constrained scaling? [y/n] ")
+            yn = input("Do you want the x- and y-axes to have constrained scaling? [y/n] ")
             equalAxes = yn == "y"
             
             beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes)

@@ -11,8 +11,8 @@ from saveToFile import saveToFile
 import numpy as np
 from beamUtils import isFloat, validLoads, checkLoads, printLoads
 
-def configureBeam():
-    """This function gets beam configurations from user and checks validity"""
+def getBeam():
+    """This function gets a valid beam from the user."""
     
     length = None
     
@@ -72,9 +72,9 @@ def mainscript():
             print("No current loads!")
         userinput = input("Choose a menu point by entering a number: ")
         
-        #Get a beam from the user, and only change anything if it is a valid beam
+        #Get a valid beam from the user
         if userinput == "1":
-            temp = configureBeam()
+            temp = getBeam()
             
             if(temp != None):
                 #Remove invalid loads, and allow saving current state

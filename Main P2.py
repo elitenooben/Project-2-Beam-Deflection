@@ -36,11 +36,11 @@ def askSave(beamLength, beamSupport, loadPositions, loadForces):
     """
     Asks whether the user wants to save.
     """
-    
+    yn = None
     yn = input("Do you want to save first? [y/n] ").lower()
     if(yn == "y"):
         saveToFile(beamLength, beamSupport, loadPositions, loadForces)
-    
+
 def mainscript():
     #Initialization
     beamLength = 10.
@@ -48,7 +48,6 @@ def mainscript():
     
     loadPositions = np.array([])
     loadForces = np.array([])
-
     while True:
         print(""" Main Menu
 1. Configure beam
@@ -86,7 +85,7 @@ def mainscript():
             
         elif userinput == "2":
             print("""
-loads menu
+ Loads menu
 1. See current loads
 2. Add a load
 3. Remove a load
@@ -103,7 +102,7 @@ loads menu
                 
                 while True:
                     position = input("Enter a position in meters: ")
-                    if isFloat(position) and float(position) > 0 and float(position) < beamLength:
+                    if isFloat(position) and float(position) >= 0 and float(position) <= beamLength:
                         break;
                     print("Invalid position of load. Enter a number in meters smaller than the beamlength")
 
@@ -165,7 +164,17 @@ loads menu
             
             input("Press enter to continue ")
         elif userinput == "5":
-            beamPlot(beamLength, loadPositions, loadForces, beamSupport)
+            
+            if len(loadPositions) == 0:
+                print("There are currently no loads!")
+                continue
+            
+            #Ask whether the user wants constrained scaling
+            equalAxes = False
+            yn = input("Do you want the x and y-axes to have constrained scaling? [y/n] ")
+            equalAxes = yn == "y"
+            
+            beamPlot(beamLength, loadPositions, loadForces, beamSupport, equalAxes)
             input("Press enter to continue ")
             
         elif userinput == "6":

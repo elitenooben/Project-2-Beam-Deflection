@@ -8,6 +8,9 @@ Created on Mon Nov 19 10:26:54 2018
 import numpy as np
 
 def beamDeflection(positions, beamLength, loadPosition, loadForce, beamSupport):
+    """
+    Calculates and returns an array of deflection caused by the given load at the given positions.
+    """
     x = positions
     l = beamLength
     a = loadPosition

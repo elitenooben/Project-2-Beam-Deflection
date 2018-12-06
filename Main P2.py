@@ -211,7 +211,7 @@ def mainscript():
             print("Quitting")
             break
         else:
-            print("Invalid input. Enter a menupoint number from 1 to 6")
+            print("Invalid input. Enter a menu point, number from 1 to 6")
     return
 mainscript()
         

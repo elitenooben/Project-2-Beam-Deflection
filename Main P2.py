@@ -9,16 +9,7 @@ from beamPlot import beamPlot
 from loadFile import loadFile
 from saveToFile import saveToFile
 import numpy as np
-
-def isFloat(string):
-    """
-    Checks whether a string can be converted to a float.
-    """
-    try:
-        float(string)
-    except ValueError:
-        return False;
-    return True;
+from beamUtils import isFloat, validLoads, checkLoads, printLoads
 
 def configureBeam():
     """This function gets beam configurations from user and checks validity"""
@@ -41,34 +32,6 @@ Support types:
 
     return (float(length), support[stype])
 
-def validLoads(beamLength, loadPositions, loadForces):
-    """Returns valid loads for the given beam length."""
-    
-    #Create indexer to index valid load positions
-    indexer = np.logical_and(loadPositions >= 0, loadPositions < beamLength)
-    
-    invalid = loadPositions[not indexer]
-    print(invalid)
-    
-    newloads = loadPositions[indexer]
-    newForces = loadForces[indexer]
-    
-    #Informs user if any load positions are invalid
-    if len(invalid)>0:
-        print("The loads at positions %s have been removed, because they are not on the %s meter long beam." % (invalid,beamLength))
-    
-    return (newloads, newForces)
-
-def checkLoads(beamLength, loadPosition):
-    """
-    Checks whether all loads are valid for current beam.
-    """    
-    for load in loadPosition:
-        if load < 0 or load > beamLength:
-            return False
-    
-    return True
-
 def askSave(beamLength, beamSupport, loadPositions, loadForces):
     """
     Asks whether the user wants to save.
@@ -77,20 +40,6 @@ def askSave(beamLength, beamSupport, loadPositions, loadForces):
     yn = input("Do you want to save first? [y/n] ").lower()
     if(yn == "y"):
         saveToFile(beamLength, beamSupport, loadPositions, loadForces)
-
-
-def printLoads(loadPositions, loadForces):
-    """
-    Prints given loads. Returns whether any loads currently exist
-    """
-    if(len(loadPositions) == 0):
-        print("No current loads")
-        return False
-    else:
-        print(" Loads")
-        for i, load in enumerate(zip(loadPositions, loadForces)):
-            print(str(i+1) + ". " + str(load[1]) + "N at " + str(load[0]) + "m")
-        return True
     
 def mainscript():
     #Initialization
@@ -202,7 +151,7 @@ loads menu
         elif userinput == "4":
             askSave(beamLength, beamSupport, loadPositions, loadForces)
             
-            #Load a beam, and change beam to it if it is valid
+            #Load a beam, and check if it is valid
             temp = loadFile()
             if temp != None:
                 beamLength = temp[0]
@@ -210,6 +159,10 @@ loads menu
                 loadPositions = temp[2]
                 loadForces = temp[3]
                 
+                print("Loaded:")
+                print("a beam of length %s m with support type %s" %(beamLength, beamSupport))
+                printLoads(loadPositions, loadForces)
+            
             input("Press enter to continue ")
         elif userinput == "5":
             beamPlot(beamLength, loadPositions, loadForces, beamSupport)

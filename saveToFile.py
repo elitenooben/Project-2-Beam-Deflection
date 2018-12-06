@@ -7,7 +7,7 @@ Created on Thu Nov 22 15:06:20 2018
 
 import numpy as np
 import pandas as pd
-
+from utils import printLoads
 
 def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
     """
@@ -17,7 +17,8 @@ def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
     """
     #Make sure there is something to save
     try:
-        print("You are saving the following:\n\nBeam length: %s\nBeam support: %s\nLoad position(s): %s\nForce(s) of load(s): %s" % (beamLength, beamSupport, loadPositions, loadForces))
+        print("You are saving a beam of length %s m with support type %s")
+        printLoads(loadPositions, loadForces)
     except NameError:
         print("One must walk before one can fly. Please choose some values before trying to save.")
         return 
@@ -35,5 +36,5 @@ def saveToFile(beamLength, beamSupport, loadPositions, loadForces):
             
             with open(filename+".csv", "w+") as f:
                 pd.DataFrame(values).to_csv(f, index=False)
-                print("Your file was saved as '" + filename + ".csv'. Good job! :D")
+                print("Your file was saved as '" + filename + ".csv'.")
             return

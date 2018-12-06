@@ -25,14 +25,14 @@ def loadFile():
         elif os.path.exists(filename+".csv") or os.path.exists(filename):
             break
         else:
-            print("File not found. Try again.")
+            print("File %s.csv not found. Try again." %(filename))
             
     #Load data from file using pandas
     data = None
     try:
         with open(filename+".csv") as file:
             data = pd.read_csv(file)
-            data = data.values.reshape(-1, 2)
+            data = data.values
             beamLength = float(data[0,0])
             beamSupport = data[0,1]
             loadPositions = data[1:,0].astype(float)
